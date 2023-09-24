@@ -27,6 +27,10 @@ public:
 	virtual void OnDeath_Implementation() = 0;
 
 	UFUNCTION(BlueprintNativeEvent, Category = "States")
-		void OnTakeDamege();
+		void OnTakeDamage();
 	virtual void OnTakeDamage_Implementation() = 0;
+
+	UFUNCTION(BlueprintNativeEvent, Category = "States")
+		void OnTakeArmorLosing();
+	virtual void OnTakeArmorLosing_Implementation() = 0;
 };

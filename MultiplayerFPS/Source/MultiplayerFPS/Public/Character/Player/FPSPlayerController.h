@@ -18,12 +18,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<class UHUDWidget>BP_HUDWidget;
 
-	void UpdateHealthPercnet(float HealthPercnet);
-	void UpdateArmorPercnet(float ArmorPercnet);
-
 	virtual void BeginPlay()override;
 
 private:
 	UPROPERTY()
 		class UHUDWidget* HUDWidget;
+
+public:
+	void UpdateHealthPercent(float HealthPercnet);
+	void UpdateArmorPercent(float ArmorPercnet);
 };

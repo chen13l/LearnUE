@@ -2,6 +2,7 @@
 
 
 #include "Character/CharacterComponent/HealthComponent.h"
+#include "Character\CharacterComponent\StateInterface.h"
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -32,13 +33,24 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-void UHealthComponent::LoseHealth(float Amount)
+void UHealthComponent::LoseState(float Amount)
 {
+	const float AbsorbedDamage = Amount * ArmorAbsorption;
+	const float RemainingArmor = Armor - AbsorbedDamage;
+	Armor = RemainingArmor;
+	if (GetOwner()->Implements<UStateInterface>()) {
+		IStateInterface::Execute_OnTakeArmorLosing(GetOwner());
+	}
+	Amount = (Amount * (1 - ArmorAbsorption)) - FMath::Min(RemainingArmor, 0.0f);
 
-}
-
-void UHealthComponent::LoseArmor(float Amount)
-{
-
+	if (Armor <= 0.f) {
+		Armor = 0.f;
+		Health -= Amount;
+		IStateInterface::Execute_OnTakeDamage(GetOwner());
+		if (Health <= 0.f) {
+			Health = 0.f;
+			IStateInterface::Execute_OnDeath(GetOwner());
+		}
+	}
 }
 

@@ -4,14 +4,14 @@
 #include "Character/Player/FPSPlayerController.h"
 #include "UI/HUDWidget.h"
 
-void AFPSPlayerController::UpdateHealthPercnet(float HealthPercnet)
+void AFPSPlayerController::UpdateHealthPercent(float HealthPercnet)
 {
 	if (HUDWidget) {
 		HUDWidget->UpdateHealthPercent(HealthPercnet);
 	}
 }
 
-void AFPSPlayerController::UpdateArmorPercnet(float ArmorPercnet)
+void AFPSPlayerController::UpdateArmorPercent(float ArmorPercnet)
 {
 	if (HUDWidget) {
 		HUDWidget->UpdateArmorPercent(ArmorPercnet);

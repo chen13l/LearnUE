@@ -20,17 +20,19 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, Category = "States")
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterStates")
 		float Health = 100.f;
-	UPROPERTY(EditDefaultsOnly, Category = "States")
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterStates")
 		float Armor = 100.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterStates")
+		float ArmorAbsorption = 0.5;
 
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void LoseHealth(float Amount);
-	void LoseArmor(float Amount);
+	void LoseState(float Amount);
 
 	FORCEINLINE float GetHealthPercent() const { return Health / 100.f; }
 	FORCEINLINE float GetArmorPercent() const { return Armor / 100.f; }
