@@ -46,6 +46,8 @@ protected:
 public:
 	APlayerFPSCharacter();
 
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

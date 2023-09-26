@@ -23,8 +23,13 @@ public:
 	AFPSCharacterBase();
 
 protected:
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Particle")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+		class USoundBase* WeaponChangedSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+		class USoundBase* HitSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 		class USoundBase* SpawnSound;
 
 	// Called when the game starts or when spawned
@@ -49,6 +54,5 @@ public:
 	void SetArmor(float Amount) { Armor = FMath::Clamp(Amount, 0.0f, MaxArmor); }
 	void ArmorAbsorbDamage(float& Damage);
 	float GetArmor() { return Armor; }
-
 
 };
