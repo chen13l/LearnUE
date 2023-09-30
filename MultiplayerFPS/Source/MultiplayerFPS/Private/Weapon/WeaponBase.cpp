@@ -13,6 +13,9 @@ AWeaponBase::AWeaponBase()
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 
+	AmmoFrom = CreateDefaultSubobject<USceneComponent>(TEXT("AmmoFrom"));
+	AmmoFrom->SetupAttachment(RootComponent);
+
 	bReplicates = true;
 }
 
@@ -28,6 +31,7 @@ void AWeaponBase::StartFire()
 	if (!bWantsFire || GetWorldTimerManager().GetTimerRemaining(FireTimer) > 0.f) {
 		return;
 	}
+	
 	
 }
 
