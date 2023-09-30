@@ -31,6 +31,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Demo|Camera")
 		FVector GetStartingCameraBoomLocation();
 
+
 protected:
 	//for looking around and stuff 
 	//because will remove the started controller and use this class instead to move the player 

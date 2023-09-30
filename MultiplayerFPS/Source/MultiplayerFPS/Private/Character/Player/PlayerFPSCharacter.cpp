@@ -104,3 +104,4 @@ void APlayerFPSCharacter::OnTakeArmorLosing_Implementation()
 		PlayerController->UpdateArmorPercent(HealthComponent->GetArmorPercent());
 	}
 }
+

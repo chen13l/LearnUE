@@ -3,6 +3,7 @@
 
 #include "Character/FPSCharacterBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AFPSCharacterBase::AFPSCharacterBase()
@@ -36,3 +37,13 @@ void AFPSCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void AFPSCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(AFPSCharacterBase, Health, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AFPSCharacterBase, Armor, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AFPSCharacterBase, Weapon, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AFPSCharacterBase, Weapons, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AFPSCharacterBase, Ammo, COND_OwnerOnly);
+
+}

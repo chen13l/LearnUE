@@ -10,7 +10,7 @@ ADemoPlayerState::ADemoPlayerState() {
 	AbilitySystemComponent->SetIsReplicated(true);
 	//set to mixed to only see the cues like visual effect or sound effect
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
-
+	
 	AttributeSetBase = CreateDefaultSubobject<UCharacterAttributeSetBase>(TEXT("AttributeSetBase"));
 	//deafaults to very low for player states and may introduce sone sort of 
 	//perceived lag to the Ability System
@@ -71,7 +71,7 @@ void ADemoPlayerState::BeginPlay()
 
 	//set delegate handle
 	if (AbilitySystemComponent) {
-		 //linking the attribute value changing evnet to these function 
+		 //linking the attribute value changing event to these function 
 		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &ADemoPlayerState::HealthChanged);
 		MaxHealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &ADemoPlayerState::MaxHealthChanged);
 		ManaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &ADemoPlayerState::ManaChanged);
