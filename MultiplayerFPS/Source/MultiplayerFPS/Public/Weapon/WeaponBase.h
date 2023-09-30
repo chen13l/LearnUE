@@ -56,26 +56,23 @@ protected:
 	FTimerHandle FireTimer;
 	bool bWantsFire;
 
-	UFUNCTION(BlueprintCallable)
-		void SetOwner(AActor* NewOwner);
 
-	UFUNCTION(BlueprintCallable)
-		virtual void StartFire();
+	virtual	void SetOwner(AActor* NewOwner) override;
 
-	UFUNCTION(BlueprintCallable)
-		void FireHitScan(FVector FireLocation,FVector FireDirection);
+	virtual void StartFire();
+
+	void FireHitScan(FVector FireLocation, FVector FireDirection);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:
 
-	UFUNCTION(Server, Replialbe)
+	UFUNCTION(Server, Reliable)
 		void ServerStartFire();
 
-	UFUNCTION(Server, Replialbe)
+	UFUNCTION(Server, Reliable)
 		void ServerStopFire();
 
-	UFUNCTION(Server, Replialbe)
-		EAmmoType GetAmmoType() const { return AmmoType; }
+	EAmmoType GetAmmoType() const { return AmmoType; }
 };

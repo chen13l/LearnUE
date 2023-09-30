@@ -26,7 +26,7 @@ void AWeaponBase::SetOwner(AActor* NewOwner)
 void AWeaponBase::StartFire()
 {
 	if (!bWantsFire || GetWorldTimerManager().GetTimerRemaining(FireTimer) > 0.f) {
-		return
+		return;
 	}
 	
 }
@@ -42,11 +42,11 @@ void AWeaponBase::BeginPlay()
 	
 }
 
-void AWeaponBase::ServerStartFire()
+void AWeaponBase::ServerStartFire_Implementation()
 {
 }
 
-void AWeaponBase::ServerStopFire()
+void AWeaponBase::ServerStopFire_Implementation()
 {
 }
 

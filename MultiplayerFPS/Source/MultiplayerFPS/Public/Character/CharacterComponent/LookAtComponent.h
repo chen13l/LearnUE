@@ -30,5 +30,5 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	FORCEINLINE void SetTarget(AActor* NewTargetActor) { TargetActor = NewTargetActor; }
-	FORCEINLINE void CanSeeTarget() { return bCanSeeTarget; }
+	FORCEINLINE bool CanSeeTarget() { return bCanSeeTarget; }
 };
