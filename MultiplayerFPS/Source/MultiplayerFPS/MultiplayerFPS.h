@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 
 #define ENUM_TO_INT32(Value) (int32)Value
-#define GET_WRAPPED_ARRAY_INDEX(Index, Count) (Index % Count + Count) % Count
+#define GET_CIRCULAR_ARRAY_INDEX(Index, Count) (Index % Count + Count) % Count
 
 UENUM(BlueprintType)
 enum class EWeaponType :uint8 {
 	Pistol UMETA(DisplayName = "Psitol"),
 	MachineGun UMETA(DisplayName = "MachineGun"),
-	Railgun UMETA(DisplayName = "Railgun")
+	Railgun UMETA(DisplayName = "Railgun"),
+	MAX
 };
 
 UENUM(BlueprintType)

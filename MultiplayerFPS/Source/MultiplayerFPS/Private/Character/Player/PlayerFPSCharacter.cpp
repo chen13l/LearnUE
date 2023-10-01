@@ -4,7 +4,6 @@
 #include "Character/Player/PlayerFPSCharacter.h"
 #include "Character\Player\FPSPlayerController.h"
 #include "Character\CharacterComponent\HealthComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/InputComponent.h"
@@ -17,9 +16,6 @@
 APlayerFPSCharacter::APlayerFPSCharacter() {
 	PrimaryActorTick.bCanEverTick = false;
 
-	GetCharacterMovement()->MaxWalkSpeed = 800.f;
-	GetCharacterMovement()->JumpZVelocity = 600.f;
-
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(GetMesh(), "Camera");
 	FollowCamera->bUsePawnControlRotation = true;
@@ -29,7 +25,6 @@ APlayerFPSCharacter::APlayerFPSCharacter() {
 void  APlayerFPSCharacter::BeginPlay() {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("The Health is %f"), GetHealth());
 }
 
 void APlayerFPSCharacter::Tick(float DeltaTime) {
@@ -45,10 +40,19 @@ void APlayerFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
 		if (InputSubsystem) {
 			InputSubsystem->AddMappingContext(IMC_PlayerInput, 0);
+			//movement
 			EnhancedPlayerInput->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::Move);
 			EnhancedPlayerInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::Look);
 			EnhancedPlayerInput->BindAction(IA_Jump, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 			EnhancedPlayerInput->BindAction(IA_Jump, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+			//weapon
+			EnhancedPlayerInput->BindAction(IA_Fire, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedFire);
+			EnhancedPlayerInput->BindAction(IA_Fire, ETriggerEvent::Completed, this, &APlayerFPSCharacter::OnReleaseFire);
+			EnhancedPlayerInput->BindAction(IA_Pistol, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedPistol);
+			EnhancedPlayerInput->BindAction(IA_MachineGun, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedMachineGun);
+			EnhancedPlayerInput->BindAction(IA_Railgun, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedRailgun);
+			EnhancedPlayerInput->BindAction(IA_PreviousWeapon, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedPreviousWeapon);
+			EnhancedPlayerInput->BindAction(IA_NextWeapon, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedNextWeapon);
 
 		}
 	}
@@ -81,11 +85,50 @@ void APlayerFPSCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+void APlayerFPSCharacter::OnPressedFire()
+{
+	if (Weapon != nullptr) {
+		Weapon->OnPressedFire();
+	}
+}
+
+void APlayerFPSCharacter::OnReleaseFire()
+{
+	if (Weapon != nullptr) {
+		Weapon->OnReleasedFire();
+	}
+}
+
+void APlayerFPSCharacter::OnPressedPistol()
+{
+	ServerEquipWeapon(EWeaponType::Pistol);
+}
+
+void APlayerFPSCharacter::OnPressedMachineGun()
+{
+	ServerEquipWeapon(EWeaponType::MachineGun);
+}
+
+void APlayerFPSCharacter::OnPressedRailgun()
+{
+	ServerEquipWeapon(EWeaponType::Railgun);
+}
+
+void APlayerFPSCharacter::OnPressedPreviousWeapon()
+{
+	ServerCycleWeapons(-1);
+}
+
+void APlayerFPSCharacter::OnPressedNextWeapon()
+{
+	ServerCycleWeapons(1);
+}
+
 void APlayerFPSCharacter::OnDeath_Implementation()
 {
 	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(GetController());
 	if (PlayerController) {
-		
+
 	}
 }
 
@@ -104,4 +147,3 @@ void APlayerFPSCharacter::OnTakeArmorLosing_Implementation()
 		PlayerController->UpdateArmorPercent(HealthComponent->GetArmorPercent());
 	}
 }
-

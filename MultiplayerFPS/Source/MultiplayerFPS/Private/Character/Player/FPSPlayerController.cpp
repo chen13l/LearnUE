@@ -21,9 +21,10 @@ void AFPSPlayerController::UpdateArmorPercent(float ArmorPercnet)
 void AFPSPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (BP_HUDWidget) {
-		HUDWidget = CreateWidget<UHUDWidget>(this, BP_HUDWidget);
-		HUDWidget->AddToViewport();
+	if (IsLocalPlayerController()) {
+		if (BP_HUDWidget) {
+			HUDWidget = CreateWidget<UHUDWidget>(this, BP_HUDWidget);
+			HUDWidget->AddToViewport();
+		}
 	}
 }

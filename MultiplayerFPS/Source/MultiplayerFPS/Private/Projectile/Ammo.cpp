@@ -70,7 +70,7 @@ void AAmmo::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveCo
 		}
 
 		if (DamageSound) {
-			UGameplayStatics::PlaySound2D(this, DamageSound);
+			UGameplayStatics::PlaySound2D(GetWorld(), DamageSound);
 		}
 		
 		Destroy();
