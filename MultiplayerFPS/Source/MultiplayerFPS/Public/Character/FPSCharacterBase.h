@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MultiplayerFPS/MultiplayerFPS.h"
 #include "GameFramework/Character.h"
 #include "FPSCharacterBase.generated.h"
 
@@ -50,6 +51,13 @@ protected:
 
 	int32 WeaponIndex = INDEX_NONE;
 
+	UFUNCTION(Server, Reliable)
+		void ServerCycleWeapons(int32 Direction);
+	UFUNCTION(Server, Reliable)
+		void ServerEquipWeapon(EWeaponType WeaponType);
+
+	bool EquipWeapon(EWeaponType WeaponType, bool bPlaySound);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -57,17 +65,39 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
+	//Health
 	void AddHealth(float Amount) { SetHealth(Health + Amount); }
 	void RemoveHealth(float Amount) { SetHealth(Health - Amount); }
 	void SetHealth(float NewHealth) { Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth); }
 	bool IsDead() const { return Health == 0.0f; }
 	float GetHealth() { return Health; }
 	// Armor
-
 	void AddArmor(float Amount) { SetArmor(Armor + Amount); }
 	void SetArmor(float Amount) { Armor = FMath::Clamp(Amount, 0.0f, MaxArmor); }
 	void ArmorAbsorbDamage(float& Damage);
 	float GetArmor() { return Armor; }
+	//Ammo
+	UFUNCTION(BlueprintCallable, Category = "FPS Character")
+		int32 GetWeaponAmmo(const EAmmoType AmmoType)const;
 
+	void AddAmmo(EAmmoType AmmoType, int32 Amount) { SetAmmo(AmmoType, GetAmmo(AmmoType) + Amount); }
+	void ConsumeAmmo(EAmmoType AmmoType, int32 Amount) { SetAmmo(AmmoType, GetAmmo(AmmoType) - Amount); }
+
+	int32 GetAmmo(EAmmoType AmmoType) { return Ammo[ENUM_TO_INT32(AmmoType)]; }
+	void SetAmmo(EAmmoType AmmoType, int32 Amount) { Ammo[ENUM_TO_INT32(AmmoType)] = FMath::Max(0, Amount); }
+
+	
+	//RPCs
+	UFUNCTION(NetMulticast, Unreliable)
+		void MulticastPlayAnimMontage(UAnimMontage* AnimMontage);
+	UFUNCTION(Client, Unreliable)
+		void ClientPlaySound(USoundBase* Sound);
+
+	//Weapon
+	void AddWeapon(EWeaponType WeaponType);
+
+	//Damage
+	void ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser);
+
+	
 };

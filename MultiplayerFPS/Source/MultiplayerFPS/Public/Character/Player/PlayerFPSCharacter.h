@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Character/FPSCharacterBase.h"
-#include "InputActionValue.h"
 #include "Character/CharacterComponent/StateInterface.h"
 #include "Character/CharacterComponent/HealthComponent.h"
+#include "Camera/CameraComponent.h"
+#include "InputActionValue.h"
 #include "PlayerFPSCharacter.generated.h"
 
 /**
@@ -24,6 +25,20 @@ protected:
 		class UInputAction* IA_Look;
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
 		class UInputAction* IA_Jump;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
+		class UInputAction* IA_Fire;
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
+		class UInputAction* IA_MachineGun;
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
+		class UInputAction* IA_Pistol;
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
+		class UInputAction* IA_Railgun;
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
+		class UInputAction* IA_NextWeapon;
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
+		class UInputAction* IA_PreviousWeapon;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
 		class UInputMappingContext* IMC_PlayerInput;
 
@@ -46,7 +61,9 @@ protected:
 public:
 	APlayerFPSCharacter();
 
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	//camera
+	FORCEINLINE FVector GetFollowCamera() const { return FollowCamera->GetComponentLocation(); }
+	FORCEINLINE FVector GetCameraDirection()const { return GetControlRotation().Vector(); }
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

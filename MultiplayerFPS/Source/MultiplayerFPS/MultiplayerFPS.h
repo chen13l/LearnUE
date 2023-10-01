@@ -11,7 +11,8 @@ UENUM(BlueprintType)
 enum class EWeaponType :uint8 {
 	Pistol UMETA(DisplayName = "Psitol"),
 	MachineGun UMETA(DisplayName = "MachineGun"),
-	Railgun UMETA(DisplayName = "Railgun")
+	Railgun UMETA(DisplayName = "Railgun"),
+	MAX
 };
 
 UENUM(BlueprintType)

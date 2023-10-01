@@ -29,7 +29,6 @@ APlayerFPSCharacter::APlayerFPSCharacter() {
 void  APlayerFPSCharacter::BeginPlay() {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("The Health is %f"), GetHealth());
 }
 
 void APlayerFPSCharacter::Tick(float DeltaTime) {
@@ -85,7 +84,7 @@ void APlayerFPSCharacter::OnDeath_Implementation()
 {
 	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(GetController());
 	if (PlayerController) {
-		
+
 	}
 }
 
@@ -104,4 +103,3 @@ void APlayerFPSCharacter::OnTakeArmorLosing_Implementation()
 		PlayerController->UpdateArmorPercent(HealthComponent->GetArmorPercent());
 	}
 }
-

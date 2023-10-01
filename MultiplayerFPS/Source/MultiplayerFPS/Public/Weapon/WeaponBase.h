@@ -16,9 +16,6 @@ public:
 	// Sets default values for this actor's properties
 	AWeaponBase();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 		class USceneComponent* AmmoFrom;
@@ -36,13 +33,13 @@ protected:
 		EAmmoType AmmoType;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-		float HitScan;
+		float HitScanRange = 9999.9f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-		float Damage;
+		float Damage = 20.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-		float FireRate;
+		float FireRate = 1.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh")
 		class USkeletalMeshComponent* Mesh;
@@ -52,6 +49,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 		class USoundBase* NoAmmoSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ammo")
+		TSubclassOf<class AAmmo>AmmoClass;
 
 	UPROPERTY()
 		class APlayerFPSCharacter* Character;
@@ -66,16 +66,19 @@ protected:
 
 	void FireHitScan(FVector FireLocation, FVector FireDirection);
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
-
 	UFUNCTION(Server, Reliable)
 		void ServerStartFire();
 
 	UFUNCTION(Server, Reliable)
 		void ServerStopFire();
+public:
 
 	EAmmoType GetAmmoType() const { return AmmoType; }
+
+	UFUNCTION(BlueprintCallable)
+		void OnPressedFire();
+
+	UFUNCTION(BlueprintCallable)
+		void OnReleasedFire();
 };
+
