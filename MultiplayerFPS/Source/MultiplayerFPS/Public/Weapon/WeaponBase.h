@@ -72,6 +72,7 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 		void ServerStopFire();
+public:
 
 	UFUNCTION(NetMulticast, Unreliable)
 		void SpawnAmmo();
