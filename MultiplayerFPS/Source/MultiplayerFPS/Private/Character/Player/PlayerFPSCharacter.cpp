@@ -3,7 +3,6 @@
 
 #include "Character/Player/PlayerFPSCharacter.h"
 #include "Character\Player\FPSPlayerController.h"
-#include "Character\CharacterComponent\HealthComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/InputComponent.h"
@@ -122,28 +121,4 @@ void APlayerFPSCharacter::OnPressedPreviousWeapon()
 void APlayerFPSCharacter::OnPressedNextWeapon()
 {
 	ServerCycleWeapons(1);
-}
-
-void APlayerFPSCharacter::OnDeath_Implementation()
-{
-	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(GetController());
-	if (PlayerController) {
-
-	}
-}
-
-void APlayerFPSCharacter::OnTakeDamage_Implementation()
-{
-	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(GetController());
-	if (PlayerController) {
-		PlayerController->UpdateHealthPercent(HealthComponent->GetHealthPercent());
-	}
-}
-
-void APlayerFPSCharacter::OnTakeArmorLosing_Implementation()
-{
-	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(GetController());
-	if (PlayerController) {
-		PlayerController->UpdateArmorPercent(HealthComponent->GetArmorPercent());
-	}
 }

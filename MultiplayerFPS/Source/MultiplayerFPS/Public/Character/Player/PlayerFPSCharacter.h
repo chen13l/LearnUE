@@ -45,12 +45,6 @@ protected:
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category = "Camera")
 		class UCameraComponent* FollowCamera;
 
-	UPROPERTY(EditDefaultsOnly, Category = "HealthComponent")
-		UHealthComponent* HealthComponent;
-	
-	virtual void OnDeath_Implementation()override;
-	virtual void OnTakeDamage_Implementation() override;
-	virtual void OnTakeArmorLosing_Implementation()override;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
