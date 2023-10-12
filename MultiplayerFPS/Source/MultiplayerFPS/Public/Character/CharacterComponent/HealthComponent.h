@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "Weapon/WeaponBase.h" 
 #include "MultiplayerFPS/MultiplayerFPS.h"
-#include "Character/FPSCharacterBase.h"
 #include "HealthComponent.generated.h"
 
 
@@ -20,9 +19,6 @@ public:
 	UHealthComponent();
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Character State")
 		float Health;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character State")
@@ -37,34 +33,11 @@ protected:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Character State")
 		TArray<int32>Ammo;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Character State")
-		class AWeaponBase* Weapon;
-
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "FPS Character")
-		TArray<class AWeaponBase*> Weapons;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FPS Character")
-		TArray<TSubclassOf<class AWeaponBase>>WeaponClasses;
-
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "FPS Character")
-		TArray<int32>Ammo;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character State")
 		class USoundBase* HitSound;
 
-	int32 WeaponIndex = INDEX_NONE;
-
-	UFUNCTION(Server, Reliable)
-		void ServerCycleWeapons(int32 Direction);
-	UFUNCTION(Server, Reliable)
-		void ServerEquipWeapon(EWeaponType WeaponType);
-
-	bool EquipWeapon(EWeaponType WeaponType, bool bPlaySound = true);
 
 public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	//Health
 	void AddHealth(float Amount) { SetHealth(Health + Amount); }
 	void RemoveHealth(float Amount) { SetHealth(Health - Amount); }
@@ -75,13 +48,10 @@ public:
 	// Armor
 	void AddArmor(float Amount) { SetArmor(Armor + Amount); }
 	void SetArmor(float Amount) { Armor = FMath::Clamp(Amount, 0.0f, MaxArmor); }
-	void ArmorAbsorbDamage(float& Damage);
+	float ArmorAbsorbDamage(float& Damage);
 	float GetArmor() { return Armor; }
 
 	//Ammo
-	UFUNCTION(BlueprintCallable, Category = "Character State")
-		int32 GetWeaponAmmo(const EAmmoType AmmoType)const { return Weapon != nullptr ? Ammo[ENUM_TO_INT32(Weapon->GetAmmoType())] : 0; };
-
 	void AddAmmo(EAmmoType AmmoType, int32 Amount) { SetAmmo(AmmoType, GetAmmo(AmmoType) + Amount); }
 	void ConsumeAmmo(EAmmoType AmmoType, int32 Amount) { SetAmmo(AmmoType, GetAmmo(AmmoType) - Amount); }
 
@@ -89,23 +59,7 @@ public:
 	void SetAmmo(EAmmoType AmmoType, int32 Amount) { Ammo[ENUM_TO_INT32(AmmoType)] = FMath::Max(0, Amount); }
 
 	//Damage
-	void ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser);
-	void LoseState(float Amount);
-
-	//Ammo
-	UFUNCTION(BlueprintCallable, Category = "FPS Character")
-		int32 GetWeaponAmmo(const EAmmoType AmmoType)const { return Weapon != nullptr ? Ammo[ENUM_TO_INT32(Weapon->GetAmmoType())] : 0; };
-
-	void AddAmmo(EAmmoType AmmoType, int32 Amount) { SetAmmo(AmmoType, GetAmmo(AmmoType) + Amount); }
-	void ConsumeAmmo(EAmmoType AmmoType, int32 Amount) { SetAmmo(AmmoType, GetAmmo(AmmoType) - Amount); }
-
-	int32 GetAmmo(EAmmoType AmmoType) { return Ammo[ENUM_TO_INT32(AmmoType)]; }
-	void SetAmmo(EAmmoType AmmoType, int32 Amount) { Ammo[ENUM_TO_INT32(AmmoType)] = FMath::Max(0, Amount); }
-
-	//Weapon
-	void AddWeapon(EWeaponType WeaponType);
-	bool EquipWeapon(EWeaponType WeaponType, bool bPlaySound = true);
-	TArray<class AWeaponBase*> GetWeaponAmmo() { return Weapons; }
+	void ApplyDamage(float Damage,class AFPSCharacterBase* DamageCauser);
 
 	FORCEINLINE float GetHealthPercent() const { return Health / 100.f; }
 	FORCEINLINE float GetArmorPercent() const { return Armor / 100.f; }

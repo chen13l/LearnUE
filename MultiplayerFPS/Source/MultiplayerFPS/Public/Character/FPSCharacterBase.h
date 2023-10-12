@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "MultiplayerFPS/MultiplayerFPS.h"
+#include "Character/CharacterComponent/HealthComponent.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "FPSCharacterBase.generated.h"
 
 UCLASS()
 class MULTIPLAYERFPS_API AFPSCharacterBase : public ACharacter
-	GENERATED_BODY()
+{	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
@@ -18,17 +20,30 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 		class USoundBase* WeaponChangedSound;
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 		class USoundBase* SpawnSound;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "FPS Character")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FPS Character")
 		class UHealthComponent* StateComp;
-
-	TArry<class AWeaponBase*> Weapons = StateComp->GetWeaponArr();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	//Weapon
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "FPS Character")
+		AWeaponBase* Weapon;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "FPS Character")
+		TArray<AWeaponBase*> Weapons;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FPS Character")
+		TArray<TSubclassOf<AWeaponBase>>WeaponClasses;
+
+	void AddWeapon(EWeaponType WeaponType);
+
+	int32 WeaponIndex = INDEX_NONE;
+	bool EquipWeapon(EWeaponType WeaponType, bool  bPlaySound = true);
 
 	UFUNCTION(Server, Reliable)
 		void ServerCycleWeapons(int32 Direction);
@@ -39,10 +54,14 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UHealthComponent* GetHealthComp() { return StateComp; }
+
+	UFUNCTION(BlueprintCallable, Category = "Character State")
+		int32 GetWeaponAmmo(const EAmmoType AmmoType)const { return Weapon != nullptr ? StateComp->GetAmmo(Weapon->GetAmmoType()) : 0; };
+
 	//RPCs
 	UFUNCTION(NetMulticast, Unreliable)
 		void MulticastPlayAnimMontage(UAnimMontage* AnimMontage);
 	UFUNCTION(Client, Unreliable)
 		void ClientPlaySound(USoundBase* Sound);
-	
 };

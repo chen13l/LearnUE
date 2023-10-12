@@ -46,7 +46,7 @@ void AWeaponBase::StartFire()
 	}
 
 	//consume the ammo
-	Character->ConsumeAmmo(AmmoType, 1);
+	Character->GetHealthComp()->ConsumeAmmo(AmmoType, 1);
 
 	//fire the hitscan using the camera location and direction
 	const FVector FireLocation = Character->GetFollowCamera();
@@ -88,7 +88,7 @@ void AWeaponBase::FireHitScan(FVector FireLocation, FVector FireDirection)
 	AFPSCharacterBase* HitCharacter = Cast<AFPSCharacterBase>(Hit.GetActor());
 
 	if (HitCharacter) {
-		HitCharacter->ApplyDamage(Damage, Character);
+		HitCharacter->GetHealthComp()->ApplyDamage(Damage, Character);
 	}
 }
 

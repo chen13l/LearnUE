@@ -63,7 +63,7 @@ void AAmmo::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveCo
 	if (Player) {
 		UHealthComponent* HealthComp = Player->FindComponentByClass<UHealthComponent>();
 		if (HealthComp) {
-			HealthComp->LoseState(Damage);
+			HealthComp->ApplyDamage(Damage,nullptr);
 		}
 		if (HitParticles) {
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticles, GetActorTransform());

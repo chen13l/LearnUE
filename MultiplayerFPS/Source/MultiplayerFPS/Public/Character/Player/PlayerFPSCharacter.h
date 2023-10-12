@@ -14,7 +14,7 @@
  * 
  */
 UCLASS()
-class MULTIPLAYERFPS_API APlayerFPSCharacter : public AFPSCharacterBase,public IStateInterface
+class MULTIPLAYERFPS_API APlayerFPSCharacter : public AFPSCharacterBase
 {
 	GENERATED_BODY()
 	
