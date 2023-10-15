@@ -5,6 +5,7 @@
 #include "Character\CharacterComponent\StateInterface.h"
 #include "Character/FPSCharacterBase.h"
 #include "Weapon/WeaponBase.h" 
+#include "Game/FPSGameModeBase.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
@@ -43,12 +44,8 @@ float UHealthComponent::ArmorAbsorbDamage(float& Damage)
 
 void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser)
 {
-	if (IsDead()) {
-		AFPSCharacterBase* Player = Cast<AFPSCharacterBase>(GetOwner());
-		if (Player != nullptr) {
-			Player->Destroy();
-		}
-	}
+	AFPSCharacterBase* Player = Cast<AFPSCharacterBase>(GetOwner());
+
 	float RemainingDamage = 0;
 	//deduct the armor and the health
 	if (Armor > 0) {
@@ -61,6 +58,17 @@ void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser
 	//play the hit sound on the owning client of the damage causer
 	if (HitSound != nullptr && DamageCauser != nullptr) {
 		DamageCauser->ClientPlaySound(HitSound);
+	}
+
+	if (PainSound != nullptr) {
+		Player->ClientPlaySound(PainSound);
+	}
+
+	if (IsDead()) {
+		if (GameMode != nullptr && DamageCauser != nullptr)
+		{
+			GameMode->OnKill(DamageCauser->GetController(), Player->GetController());
+		}
 	}
 }
 

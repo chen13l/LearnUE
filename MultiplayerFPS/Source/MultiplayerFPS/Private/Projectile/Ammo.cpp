@@ -64,7 +64,7 @@ void AAmmo::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveCo
 	if (Player) {
 		UHealthComponent* HealthComp = Player->FindComponentByClass<UHealthComponent>();
 		if (HealthComp) {
-			HealthComp->ApplyDamage(Damage,nullptr);
+			HealthComp->ApplyDamage(Damage, AmmoOwner);
 			AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(Player->GetController());
 			if (PlayerController != nullptr) {
 				PlayerController->UpdateHealthPercent(Player->GetHealthComp()->GetHealthPercent());

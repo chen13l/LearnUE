@@ -48,6 +48,12 @@ void AWeaponBase::StartFire()
 		return;
 	}
 
+	//player the fire anim montage in all of the instances of the owning character
+	if (FireAnim) {
+		Character->MulticastPlayAnimMontage(FireAnim);
+		Character->MulticastPlayFireSound(FireSound, FireSoundeAttenuation);
+	}
+
 	//consume the ammo
 	Character->GetHealthComp()->ConsumeAmmo(AmmoType, 1);
 
@@ -56,13 +62,7 @@ void AWeaponBase::StartFire()
 	const FVector FireDirection = Character->GetCameraDirection();
 
 	FireHitScan(FireLocation, FireDirection);
-
-	//player the fire anim montage in all of the instances of the owning character
-	if (FireAnim) {
-		Character->MulticastPlayAnimMontage(FireAnim);
-		Character->MulticastPlayFireSound(FireSound, FireSoundeAttenuation);
-	}
-
+	
 	SpawnAmmo();
 
 	//schedule the FireTimer depending on the value of the FireMode
@@ -92,7 +92,6 @@ void AWeaponBase::FireHitScan(FVector FireLocation, FVector FireDirection)
 	AFPSCharacterBase* HitCharacter = Cast<AFPSCharacterBase>(Hit.GetActor());
 
 	if (HitCharacter) {
-		HitCharacter->GetHealthComp()->ApplyDamage(Damage, Character);
 		AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(HitCharacter->GetController());
 		if (PlayerController != nullptr) {
 			PlayerController->UpdateHealthPercent(HitCharacter->GetHealthComp()->GetHealthPercent());
@@ -126,12 +125,13 @@ void AWeaponBase::ServerStopFire_Implementation()
 void AWeaponBase::SpawnAmmo_Implementation() {
 
 	const FVector FireDirection = Character->GetCameraDirection();
-
+	AFPSCharacterBase* WeaponOwner = Cast<AFPSCharacterBase>(GetOwner());
 	//spawn ammo
 	float SpawnDistance = 20.f;
 	const FVector SpawnLocation = AmmoFrom->GetComponentLocation() + (FireDirection * SpawnDistance);
 	FTransform SpawnTransform(AmmoFrom->GetComponentRotation(), SpawnLocation);
 	AAmmo* Projectile = GetWorld()->SpawnActorDeferred<AAmmo>(AmmoClass, SpawnTransform);
+	Projectile->SetAmmoOwner(WeaponOwner);
 	Projectile->GetAmmoMovementComponent()->InitialSpeed = 9999.9f;
 	Projectile->FinishSpawning(SpawnTransform);
 }

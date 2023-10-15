@@ -38,13 +38,14 @@ protected:
 		class UInputAction* IA_NextWeapon;
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
 		class UInputAction* IA_PreviousWeapon;
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
+		class UInputAction* IA_Scoreboard;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
 		class UInputMappingContext* IMC_PlayerInput;
 
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category = "Camera")
 		class UCameraComponent* FollowCamera;
-
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -61,6 +62,8 @@ protected:
 	void OnPressedRailgun();
 	void OnPressedPreviousWeapon();
 	void OnPressedNextWeapon();
+
+	void OnPressedScoreboard();
 
 public:
 	APlayerFPSCharacter();

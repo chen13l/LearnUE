@@ -11,7 +11,8 @@
 
 UCLASS()
 class MULTIPLAYERFPS_API AFPSCharacterBase : public ACharacter
-{	GENERATED_BODY()
+{
+	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
@@ -20,15 +21,20 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 		class USoundBase* WeaponChangedSound;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 		class USoundBase* SpawnSound;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FPS Character")
 		class UHealthComponent* StateComp;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+		USoundBase* LandSound;
+
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	//Weapon
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "FPS Character")
@@ -49,6 +55,11 @@ protected:
 		void ServerCycleWeapons(int32 Direction);
 	UFUNCTION(Server, Reliable)
 		void ServerEquipWeapon(EWeaponType WeaponType);
+
+	virtual void FellOutOfWorld(const UDamageType& DmgType) override;
+
+	//
+	virtual void Landed(const FHitResult& Hit) override;
 
 public:
 	// Called to bind functionality to input

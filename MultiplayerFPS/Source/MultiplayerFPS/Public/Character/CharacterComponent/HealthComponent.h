@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Weapon/WeaponBase.h" 
+#include "Game/FPSGameModeBase.h"
 #include "MultiplayerFPS/MultiplayerFPS.h"
 #include "HealthComponent.generated.h"
 
@@ -36,6 +37,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character State")
 		class USoundBase* HitSound;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+		USoundBase* PainSound;
+
+	//game mode 
+	UPROPERTY()
+		class AFPSGameModeBase* GameMode;
 
 	bool bIsDead = Health > 0.f ? false : true;
 
@@ -62,6 +69,9 @@ public:
 
 	//Damage
 	void ApplyDamage(float Damage,class AFPSCharacterBase* DamageCauser);
+
+	AFPSGameModeBase* GetGameMode() { return GameMode; }
+	void SetGameMode(class AFPSGameModeBase* NewGameMode){GameMode = NewGameMode;}
 
 	FORCEINLINE float GetHealthPercent() const { return Health / 100.f; }
 	FORCEINLINE float GetArmorPercent() const { return Armor / 100.f; }

@@ -3,9 +3,11 @@
 
 #include "Character/FPSCharacterBase.h"
 #include "Weapon/WeaponBase.h" 
+#include "Game/FPSGameModeBase.h"
 #include "MultiplayerFPS\MultiplayerFPS.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "..\..\Public\Character\FPSCharacterBase.h"
 
 // Sets default values
 AFPSCharacterBase::AFPSCharacterBase()
@@ -39,6 +41,23 @@ void AFPSCharacterBase::BeginPlay()
 	//add all weapons
 	for (int32 i = 0; i < WeaponCount; ++i) {
 		AddWeapon(static_cast<EWeaponType>(i));
+	}
+	
+	EquipWeapon(EWeaponType::MachineGun, false);
+
+	AFPSGameModeBase* GameMode = Cast<AFPSGameModeBase>(GetWorld()->GetAuthGameMode());
+	StateComp->SetGameMode(GameMode);
+	
+}
+
+void AFPSCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason) {
+	Super::EndPlay(EndPlayReason);
+
+	// Destroy all of the weapons
+
+	for (AWeaponBase* WeaponToDestroy : Weapons)
+	{
+		WeaponToDestroy->Destroy();
 	}
 }
 
@@ -120,6 +139,20 @@ bool AFPSCharacterBase::EquipWeapon(EWeaponType WeaponType, bool  bPlaySound)
 	return true;
 }
 
+void AFPSCharacterBase::FellOutOfWorld(const UDamageType& DmgType)
+{
+	AFPSGameModeBase* GameMode = StateComp->GetGameMode();
+	if (GameMode != nullptr) {
+		GameMode->OnKill(nullptr, GetController());
+	}
+}
+
+void AFPSCharacterBase::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	UGameplayStatics::PlaySound2D(GetWorld(), LandSound);
+}
 
 void AFPSCharacterBase::ServerCycleWeapons_Implementation(int32 Direction)
 {

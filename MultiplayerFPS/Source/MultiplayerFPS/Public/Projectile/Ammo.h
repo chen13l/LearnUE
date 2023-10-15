@@ -37,6 +37,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ammo")
 		class USoundBase* DamageSound;
 
+	class AFPSCharacterBase* AmmoOwner;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -54,4 +56,6 @@ public:
 	FORCEINLINE UProjectileMovementComponent* GetAmmoMovementComponent()const {
 		return AmmoMovementComp;
 	}
+
+	void SetAmmoOwner(class AFPSCharacterBase* NewAmmoOwner) { AmmoOwner = NewAmmoOwner; }
 };

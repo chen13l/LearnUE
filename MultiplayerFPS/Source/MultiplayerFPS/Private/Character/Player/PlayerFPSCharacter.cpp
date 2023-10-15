@@ -9,6 +9,7 @@
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "..\..\..\Public\Character\Player\PlayerFPSCharacter.h"
 
 
 
@@ -23,8 +24,10 @@ APlayerFPSCharacter::APlayerFPSCharacter() {
 
 void  APlayerFPSCharacter::BeginPlay() {
 	Super::BeginPlay();
-
+	
 }
+
+
 
 void APlayerFPSCharacter::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
@@ -53,7 +56,8 @@ void APlayerFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 			EnhancedPlayerInput->BindAction(IA_Railgun, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedRailgun);
 			EnhancedPlayerInput->BindAction(IA_PreviousWeapon, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedPreviousWeapon);
 			EnhancedPlayerInput->BindAction(IA_NextWeapon, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedNextWeapon);
-
+			//other
+			EnhancedPlayerInput->BindAction(IA_Scoreboard, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedScoreboard);
 		}
 	}
 }
@@ -122,4 +126,13 @@ void APlayerFPSCharacter::OnPressedPreviousWeapon()
 void APlayerFPSCharacter::OnPressedNextWeapon()
 {
 	ServerCycleWeapons(1);
+}
+
+void APlayerFPSCharacter::OnPressedScoreboard()
+{
+	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(GetController());
+
+	if (PlayerController != nullptr) {
+		PlayerController->ToggleScoreboard();
+	}
 }
