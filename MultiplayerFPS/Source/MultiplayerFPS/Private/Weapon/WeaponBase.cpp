@@ -3,6 +3,7 @@
 
 #include "Weapon/WeaponBase.h"
 #include "Character/Player/PlayerFPSCharacter.h"
+#include "Character/Player/FPSPlayerController.h"
 #include "Projectile/Ammo.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -18,6 +19,8 @@ AWeaponBase::AWeaponBase()
 
 	AmmoFrom = CreateDefaultSubobject<USceneComponent>(TEXT("AmmoFrom"));
 	AmmoFrom->SetupAttachment(RootComponent);
+	AmmoFrom->SetRelativeLocation(FVector(0.f, 50.f, 10.f));
+	AmmoFrom->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
 
 	bReplicates = true;
 }
@@ -57,6 +60,7 @@ void AWeaponBase::StartFire()
 	//player the fire anim montage in all of the instances of the owning character
 	if (FireAnim) {
 		Character->MulticastPlayAnimMontage(FireAnim);
+		Character->MulticastPlayFireSound(FireSound, FireSoundeAttenuation);
 	}
 
 	SpawnAmmo();
@@ -89,6 +93,11 @@ void AWeaponBase::FireHitScan(FVector FireLocation, FVector FireDirection)
 
 	if (HitCharacter) {
 		HitCharacter->GetHealthComp()->ApplyDamage(Damage, Character);
+		AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(HitCharacter->GetController());
+		if (PlayerController != nullptr) {
+			PlayerController->UpdateHealthPercent(HitCharacter->GetHealthComp()->GetHealthPercent());
+			PlayerController->UpdateArmorPercent(HitCharacter->GetHealthComp()->GetArmorPercent());
+		}
 	}
 }
 

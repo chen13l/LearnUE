@@ -64,4 +64,6 @@ public:
 		void MulticastPlayAnimMontage(UAnimMontage* AnimMontage);
 	UFUNCTION(Client, Unreliable)
 		void ClientPlaySound(USoundBase* Sound);
+	UFUNCTION(NetMulticast, Unreliable)
+		void MulticastPlayFireSound(USoundBase* FireSound, USoundAttenuation* FireSoundeAttenuation);
 };

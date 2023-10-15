@@ -156,6 +156,18 @@ void AFPSCharacterBase::MulticastPlayAnimMontage_Implementation(UAnimMontage* An
 }
 
 
+void AFPSCharacterBase::MulticastPlayFireSound_Implementation(USoundBase* FireSound, USoundAttenuation* FireSoundeAttenuation)
+{
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(),
+		FireSound,
+		GetActorLocation(),
+		1.f,
+		1.f,
+		0.f,
+		FireSoundeAttenuation
+		);
+}
+
 void AFPSCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 

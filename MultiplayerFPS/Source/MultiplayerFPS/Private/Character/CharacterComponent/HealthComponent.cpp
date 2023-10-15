@@ -25,31 +25,39 @@ UHealthComponent::UHealthComponent()
 	Ammo.Init(50, AmmoCount);
 }
 
-
 float UHealthComponent::ArmorAbsorbDamage(float& Damage)
 {
 	//calculate how much damage was absorbed and sbustract that from the armor
 	const float AbsorbDamage = Damage * ArmorAbsorption;
-	const float RemainingArmmor = Armor - AbsorbDamage;
+	const float RemainingArmmor = FMath::Max(Armor - AbsorbDamage, 0.f);
 
 	SetArmor(RemainingArmmor);
 
 	//Recalculate the damage
-	Damage = (Damage * (1 - ArmorAbsorption)) - FMath::Min(RemainingArmmor, 0.f);
-
-	return Damage;
+	if (!RemainingArmmor) {
+		float RemainingDamage = (Damage * (1 - ArmorAbsorption)) - FMath::Min(RemainingArmmor, 0.f);
+		return RemainingDamage;
+	}
+	return 0;
 }
 
 void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser)
 {
 	if (IsDead()) {
-		return;
+		AFPSCharacterBase* Player = Cast<AFPSCharacterBase>(GetOwner());
+		if (Player != nullptr) {
+			Player->Destroy();
+		}
 	}
-
+	float RemainingDamage = 0;
 	//deduct the armor and the health
-	float RemainingDamage = ArmorAbsorbDamage(Damage);
-	RemoveHealth(RemainingDamage);
-
+	if (Armor > 0) {
+		RemainingDamage = ArmorAbsorbDamage(Damage);
+		RemoveHealth(RemainingDamage);
+	}
+	else {
+		RemoveHealth(Damage);
+	}
 	//play the hit sound on the owning client of the damage causer
 	if (HitSound != nullptr && DamageCauser != nullptr) {
 		DamageCauser->ClientPlaySound(HitSound);

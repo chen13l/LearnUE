@@ -4,6 +4,7 @@
 #include "Projectile/Ammo.h"
 #include "Character\CharacterComponent\HealthComponent.h"
 #include "Character\Player\PlayerFPSCharacter.h"
+#include "Character/Player/FPSPlayerController.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
@@ -64,6 +65,11 @@ void AAmmo::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveCo
 		UHealthComponent* HealthComp = Player->FindComponentByClass<UHealthComponent>();
 		if (HealthComp) {
 			HealthComp->ApplyDamage(Damage,nullptr);
+			AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(Player->GetController());
+			if (PlayerController != nullptr) {
+				PlayerController->UpdateHealthPercent(Player->GetHealthComp()->GetHealthPercent());
+				PlayerController->UpdateArmorPercent(Player->GetHealthComp()->GetArmorPercent());
+			}
 		}
 		if (HitParticles) {
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticles, GetActorTransform());

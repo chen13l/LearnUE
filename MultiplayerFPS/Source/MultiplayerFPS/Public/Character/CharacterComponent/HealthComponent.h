@@ -37,12 +37,14 @@ protected:
 		class USoundBase* HitSound;
 
 
+	bool bIsDead = Health > 0.f ? false : true;
+
 public:
 	//Health
 	void AddHealth(float Amount) { SetHealth(Health + Amount); }
 	void RemoveHealth(float Amount) { SetHealth(Health - Amount); }
 	void SetHealth(float NewHealth) { Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth); }
-	bool IsDead() const { return Health == 0.0f; }
+	bool IsDead() const { return Health <= 0.0f; }
 	float GetHealth() { return Health; }
 
 	// Armor

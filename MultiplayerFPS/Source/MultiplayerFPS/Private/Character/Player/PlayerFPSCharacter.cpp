@@ -28,6 +28,7 @@ void  APlayerFPSCharacter::BeginPlay() {
 
 void APlayerFPSCharacter::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+
 }
 
 void APlayerFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {

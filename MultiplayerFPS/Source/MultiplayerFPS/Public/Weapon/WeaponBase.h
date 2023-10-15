@@ -51,6 +51,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 		class USoundBase* NoAmmoSound;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+		class USoundBase* FireSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+		class USoundAttenuation* FireSoundeAttenuation;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ammo")
 		TSubclassOf<class AAmmo>AmmoClass;
 
