@@ -40,6 +40,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 		USoundBase* PainSound;
 
+
 	//game mode 
 	UPROPERTY()
 		class AFPSGameModeBase* GameMode;
@@ -75,4 +76,5 @@ public:
 
 	FORCEINLINE float GetHealthPercent() const { return Health / 100.f; }
 	FORCEINLINE float GetArmorPercent() const { return Armor / 100.f; }
+
 };

@@ -2,7 +2,7 @@
 
 
 #include "Character/CharacterComponent/HealthComponent.h"
-#include "Character\CharacterComponent\StateInterface.h"
+#include "Character/Player/FPSPlayerController.h"
 #include "Character/FPSCharacterBase.h"
 #include "Weapon/WeaponBase.h" 
 #include "Game/FPSGameModeBase.h"
@@ -24,6 +24,7 @@ UHealthComponent::UHealthComponent()
 	//initial the ammo array
 	constexpr int32 AmmoCount = ENUM_TO_INT32(EAmmoType::MAX);
 	Ammo.Init(50, AmmoCount);
+
 }
 
 float UHealthComponent::ArmorAbsorbDamage(float& Damage)
@@ -64,12 +65,21 @@ void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser
 		Player->ClientPlaySound(PainSound);
 	}
 
-	if (IsDead()) {
+	if (GetHealth() <= 0.0f) {
 		if (GameMode != nullptr && DamageCauser != nullptr)
 		{
 			GameMode->OnKill(DamageCauser->GetController(), Player->GetController());
 		}
 	}
+
+	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(Player->GetController());
+	if (PlayerController != nullptr) {
+		PlayerController->UpdateHealthPercent(Player->GetHealthComp()->GetHealthPercent());
+		PlayerController->UpdateArmorPercent(Player->GetHealthComp()->GetArmorPercent());
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("has %f health"), GetHealth());
+	UE_LOG(LogTemp, Warning, TEXT("has %f Armor"), GetArmor());
 }
 
 void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const {

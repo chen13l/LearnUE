@@ -27,7 +27,7 @@ void AFPSPlayerController::BeginPlay()
 			HUDWidget = CreateWidget<UHUDWidget>(this, BP_HUDWidget);
 			HUDWidget->UpdateArmorPercent(1.0f);
 			HUDWidget->UpdateHealthPercent(1.0f);
-			HUDWidget->AddToViewport();
+			HUDWidget->AddToViewport(1);
 		}
 	}
 
