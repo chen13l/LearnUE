@@ -19,6 +19,7 @@ APlayerFPSCharacter::APlayerFPSCharacter() {
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(GetMesh(), "Camera");
 	FollowCamera->bUsePawnControlRotation = true;
+
 }
 
 

@@ -2,8 +2,10 @@
 
 
 #include "Character/Player/FPSPlayerController.h"
+#include "Character/FPSCharacterBase.h"
 #include "UI/HUDWidget.h"
 #include "UI/PlayerMenu.h"
+
 
 void AFPSPlayerController::UpdateHealthPercent(float HealthPercnet)
 {
@@ -12,10 +14,10 @@ void AFPSPlayerController::UpdateHealthPercent(float HealthPercnet)
 	}
 }
 
-void AFPSPlayerController::UpdateArmorPercent(float ArmorPercnet)
+void AFPSPlayerController::UpdateArmorPercent(float ArmorPercent)
 {
 	if (HUDWidget) {
-		HUDWidget->UpdateArmorPercent(ArmorPercnet);
+		HUDWidget->UpdateArmorPercent(ArmorPercent);
 	}
 }
 
@@ -37,8 +39,6 @@ void AFPSPlayerController::BeginPlay()
 			PlayerMenu->AddToViewport(0);
 		}
 	}
-
-
 }
 
 void AFPSPlayerController::ToggleScoreboard(){
@@ -58,3 +58,4 @@ void AFPSPlayerController::ClientShowScoreboard_Implementation() {
 		PlayerMenu->SetScoreboardVisibility(true);
 	}
 }
+

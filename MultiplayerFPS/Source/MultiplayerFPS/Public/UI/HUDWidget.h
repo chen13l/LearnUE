@@ -22,4 +22,5 @@ public:
 
 	void UpdateHealthPercent(float HealthPercent);
 	void UpdateArmorPercent(float ArmorPercent);
+
 };

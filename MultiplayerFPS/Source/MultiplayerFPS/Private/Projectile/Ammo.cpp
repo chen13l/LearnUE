@@ -65,11 +65,6 @@ void AAmmo::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveCo
 		UHealthComponent* HealthComp = Player->GetHealthComp();
 		if (HealthComp) {
 			HealthComp->ApplyDamage(Damage, AmmoOwner);
-			AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(Player->GetController());
-			if (PlayerController != nullptr) {
-				PlayerController->UpdateHealthPercent(Player->GetHealthComp()->GetHealthPercent());
-				PlayerController->UpdateArmorPercent(Player->GetHealthComp()->GetArmorPercent());
-			}
 		}
 		if (HitParticles) {
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticles, GetActorTransform());

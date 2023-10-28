@@ -20,6 +20,8 @@ AFPSCharacterBase::AFPSCharacterBase()
 
 	StateComp = CreateDefaultSubobject<UHealthComponent>(TEXT("StateComponent"));
 
+
+
 }
 
 // Called when the game starts or when spawned

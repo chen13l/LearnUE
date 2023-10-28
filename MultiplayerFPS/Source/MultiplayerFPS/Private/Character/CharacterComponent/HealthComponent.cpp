@@ -46,7 +46,8 @@ float UHealthComponent::ArmorAbsorbDamage(float& Damage)
 void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser)
 {
 	AFPSCharacterBase* Player = Cast<AFPSCharacterBase>(GetOwner());
-
+	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(Player->GetController());
+	
 	float RemainingDamage = 0;
 	//deduct the armor and the health
 	if (Armor > 0) {
@@ -56,6 +57,13 @@ void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser
 	else {
 		RemoveHealth(Damage);
 	}
+	
+	if (!ReceivedDamage.IsAlreadyBound(this, &UHealthComponent::UpdateState)) {
+		ReceivedDamage.AddDynamic(this, &UHealthComponent::UpdateState);
+	}
+
+	ReceivedDamage.Broadcast(GetHealthPercent(), GetArmorPercent());
+
 	//play the hit sound on the owning client of the damage causer
 	if (HitSound != nullptr && DamageCauser != nullptr) {
 		DamageCauser->ClientPlaySound(HitSound);
@@ -72,14 +80,16 @@ void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser
 		}
 	}
 
+}
+
+void UHealthComponent::UpdateState(float HealthPercenet, float ArmorPercent)
+{
+	AFPSCharacterBase* Player = Cast<AFPSCharacterBase>(GetOwner());
 	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(Player->GetController());
 	if (PlayerController != nullptr) {
-		PlayerController->UpdateHealthPercent(Player->GetHealthComp()->GetHealthPercent());
-		PlayerController->UpdateArmorPercent(Player->GetHealthComp()->GetArmorPercent());
+		PlayerController->UpdateHealthPercent(HealthPercenet);
+		PlayerController->UpdateArmorPercent(ArmorPercent);
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("has %f health"), GetHealth());
-	UE_LOG(LogTemp, Warning, TEXT("has %f Armor"), GetArmor());
 }
 
 void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const {

@@ -9,6 +9,7 @@
 #include "MultiplayerFPS/MultiplayerFPS.h"
 #include "HealthComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FReceivedDamageDeleGate, float, HealthPercent, float, ArmorPercent);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MULTIPLAYERFPS_API UHealthComponent : public UActorComponent
@@ -69,6 +70,7 @@ public:
 	void SetAmmo(EAmmoType AmmoType, int32 Amount) { Ammo[ENUM_TO_INT32(AmmoType)] = FMath::Max(0, Amount); }
 
 	//Damage
+	
 	void ApplyDamage(float Damage,class AFPSCharacterBase* DamageCauser);
 
 	AFPSGameModeBase* GetGameMode() { return GameMode; }
@@ -77,4 +79,8 @@ public:
 	FORCEINLINE float GetHealthPercent() const { return Health / 100.f; }
 	FORCEINLINE float GetArmorPercent() const { return Armor / 100.f; }
 
+	FReceivedDamageDeleGate ReceivedDamage;
+
+	UFUNCTION()
+		virtual void UpdateState(float HealthPercenet, float ArmorPercent);
 };

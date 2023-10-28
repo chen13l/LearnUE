@@ -21,8 +21,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FPS Player Controller")
 		TSubclassOf<class UPlayerMenu> PlayerMenuClass;
 
-	
-
 	virtual void BeginPlay()override;
 
 private:
@@ -34,7 +32,7 @@ private:
 
 public:
 	void UpdateHealthPercent(float HealthPercnet);
-	void UpdateArmorPercent(float ArmorPercnet);
+	void UpdateArmorPercent(float ArmorPercent);
 
 	void ToggleScoreboard();
 
