@@ -2,14 +2,13 @@
 
 
 #include "Character/CharacterComponent/HealthComponent.h"
-#include "Character/Player/FPSPlayerController.h"
 #include "Character/FPSCharacterBase.h"
 #include "Weapon/WeaponBase.h" 
 #include "Game/FPSGameModeBase.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "GameFramework/Controller.h"
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -20,11 +19,12 @@ UHealthComponent::UHealthComponent()
 
 	SetHealth(MaxHealth);
 	SetArmor(MaxArmor);
+}
 
-	//initial the ammo array
-	constexpr int32 AmmoCount = ENUM_TO_INT32(EAmmoType::MAX);
-	Ammo.Init(50, AmmoCount);
-
+void UHealthComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	GameMode = Cast<AFPSGameModeBase>(GetWorld()->GetAuthGameMode());
 }
 
 float UHealthComponent::ArmorAbsorbDamage(float& Damage)
@@ -45,9 +45,6 @@ float UHealthComponent::ArmorAbsorbDamage(float& Damage)
 
 void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser)
 {
-	AFPSCharacterBase* Player = Cast<AFPSCharacterBase>(GetOwner());
-	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(Player->GetController());
-	
 	float RemainingDamage = 0;
 	//deduct the armor and the health
 	if (Armor > 0) {
@@ -56,10 +53,6 @@ void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser
 	}
 	else {
 		RemoveHealth(Damage);
-	}
-	
-	if (!ReceivedDamage.IsAlreadyBound(this, &UHealthComponent::UpdateState)) {
-		ReceivedDamage.AddDynamic(this, &UHealthComponent::UpdateState);
 	}
 
 	ReceivedDamage.Broadcast(GetHealthPercent(), GetArmorPercent());
@@ -76,20 +69,16 @@ void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser
 	if (GetHealth() <= 0.0f) {
 		if (GameMode != nullptr && DamageCauser != nullptr)
 		{
-			GameMode->OnKill(DamageCauser->GetController(), Player->GetController());
+			GameMode->OnKill(DamageCauser->GetController(), PlayerController);
 		}
 	}
 
 }
 
-void UHealthComponent::UpdateState(float HealthPercenet, float ArmorPercent)
+void UHealthComponent::SetCompInfo(AFPSCharacterBase* NewPlayer)
 {
-	AFPSCharacterBase* Player = Cast<AFPSCharacterBase>(GetOwner());
-	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(Player->GetController());
-	if (PlayerController != nullptr) {
-		PlayerController->UpdateHealthPercent(HealthPercenet);
-		PlayerController->UpdateArmorPercent(ArmorPercent);
-	}
+	Player = NewPlayer;
+	PlayerController =Player->GetController();
 }
 
 void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const {
@@ -97,6 +86,5 @@ void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 	DOREPLIFETIME_CONDITION(UHealthComponent, Health, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(UHealthComponent, Armor, COND_OwnerOnly);
-	DOREPLIFETIME_CONDITION(UHealthComponent, Ammo, COND_OwnerOnly);
 }
 

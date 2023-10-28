@@ -3,9 +3,11 @@
 
 #include "Character/Player/PlayerFPSCharacter.h"
 #include "Character\Player\FPSPlayerController.h"
+#include "Character/CharacterComponent/LookAtComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/InputComponent.h"
+#include "Pickups/PickupBase.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -20,6 +22,8 @@ APlayerFPSCharacter::APlayerFPSCharacter() {
 	FollowCamera->SetupAttachment(GetMesh(), "Camera");
 	FollowCamera->bUsePawnControlRotation = true;
 
+	ViewComp = CreateDefaultSubobject<ULookAtComponent>(TEXT("View Comp"));
+	ViewComp->SetupAttachment(RootComponent);
 }
 
 
@@ -59,6 +63,7 @@ void APlayerFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 			EnhancedPlayerInput->BindAction(IA_NextWeapon, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedNextWeapon);
 			//other
 			EnhancedPlayerInput->BindAction(IA_Scoreboard, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedScoreboard);
+			EnhancedPlayerInput->BindAction(IA_Pick, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedPick);
 		}
 	}
 }
@@ -92,15 +97,15 @@ void APlayerFPSCharacter::Look(const FInputActionValue& Value)
 
 void APlayerFPSCharacter::OnPressedFire()
 {
-	if (Weapon != nullptr) {
-		Weapon->OnPressedFire();
+	if (WeaponComp->GetEquipingWeapon() != nullptr) {
+		WeaponComp->GetEquipingWeapon()->OnPressedFire();
 	}
 }
 
 void APlayerFPSCharacter::OnReleaseFire()
 {
-	if (Weapon != nullptr) {
-		Weapon->OnReleasedFire();
+	if (WeaponComp->GetEquipingWeapon() != nullptr) {
+		WeaponComp->GetEquipingWeapon()->OnReleasedFire();
 	}
 }
 
@@ -127,6 +132,14 @@ void APlayerFPSCharacter::OnPressedPreviousWeapon()
 void APlayerFPSCharacter::OnPressedNextWeapon()
 {
 	ServerCycleWeapons(1);
+}
+
+void APlayerFPSCharacter::OnPressedPick()
+{
+	APickupBase* PickTarget = ViewComp->GetTarget();
+	if (PickTarget != nullptr) {
+		PickTarget->OnPickedUp(this);
+	}
 }
 
 void APlayerFPSCharacter::OnPressedScoreboard()

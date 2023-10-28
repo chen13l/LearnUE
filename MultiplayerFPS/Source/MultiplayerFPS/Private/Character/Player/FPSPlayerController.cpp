@@ -3,22 +3,24 @@
 
 #include "Character/Player/FPSPlayerController.h"
 #include "Character/FPSCharacterBase.h"
+#include "Character/CharacterComponent/HealthComponent.h"
 #include "UI/HUDWidget.h"
 #include "UI/PlayerMenu.h"
 
-
-void AFPSPlayerController::UpdateHealthPercent(float HealthPercnet)
+void AFPSPlayerController::UpdateStatePercent(float HealthPercent, float ArmorPercent)
 {
 	if (HUDWidget) {
-		HUDWidget->UpdateHealthPercent(HealthPercnet);
+		HUDWidget->UpdateHealthPercent(HealthPercent);
+		HUDWidget->UpdateArmorPercent(ArmorPercent);
 	}
 }
 
-void AFPSPlayerController::UpdateArmorPercent(float ArmorPercent)
+void AFPSPlayerController::OnPossess(APawn* PossessedPawn)
 {
-	if (HUDWidget) {
-		HUDWidget->UpdateArmorPercent(ArmorPercent);
-	}
+	Super::OnPossess(PossessedPawn);
+
+	AFPSCharacterBase* CharacterBase = Cast<AFPSCharacterBase>(PossessedPawn);
+	CharacterBase->GetHealthComp()->ReceivedDamage.AddDynamic(this,&AFPSPlayerController::UpdateStatePercent);
 }
 
 void AFPSPlayerController::BeginPlay()

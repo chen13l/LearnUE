@@ -31,8 +31,10 @@ private:
 		class UPlayerMenu* PlayerMenu;
 
 public:
-	void UpdateHealthPercent(float HealthPercnet);
-	void UpdateArmorPercent(float ArmorPercent);
+	UFUNCTION()
+		void UpdateStatePercent(float HealthPercent,float ArmorPercent);
+
+	virtual void OnPossess(APawn* PossessedPawn) override;
 
 	void ToggleScoreboard();
 

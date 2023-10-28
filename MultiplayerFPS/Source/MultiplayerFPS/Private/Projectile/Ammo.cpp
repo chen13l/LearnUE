@@ -49,16 +49,6 @@ void AAmmo::Tick(float DeltaTime)
 
 void AAmmo::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (HitSound && NormalImpulse.Size() >= 600.f) {
-		UGameplayStatics::PlaySoundAtLocation(this,
-			HitSound,
-			GetActorLocation(),
-			1.f,
-			1.f,
-			0.f,
-			HitSoundAttenuation);
-	}
-
 	APlayerFPSCharacter* Player = Cast<APlayerFPSCharacter>(OtherActor);
 
 	if (Player) {
@@ -66,6 +56,17 @@ void AAmmo::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveCo
 		if (HealthComp) {
 			HealthComp->ApplyDamage(Damage, AmmoOwner);
 		}
+
+		if (HitSound && NormalImpulse.Size() >= 600.f) {
+			UGameplayStatics::PlaySoundAtLocation(this,
+				HitSound,
+				GetActorLocation(),
+				1.f,
+				1.f,
+				0.f,
+				HitSoundAttenuation);
+		}
+
 		if (HitParticles) {
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticles, GetActorTransform());
 		}

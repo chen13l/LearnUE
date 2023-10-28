@@ -135,8 +135,7 @@ void AFPSGameModeBase::OnKill(AController* KillerController, AController* Victim
 			RestartPlayer(VictimController);
 			AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(VictimController);
 			if (PlayerController) {
-				PlayerController->UpdateHealthPercent(1.0f);
-				PlayerController->UpdateArmorPercent(1.0f);
+				PlayerController->UpdateStatePercent(1.0f, 1.0f);
 				UE_LOG(LogTemp, Error, TEXT("Has ReSpawned"));
 			}
 		}

@@ -21,6 +21,12 @@ public:
 	UHealthComponent();
 
 protected:
+	class AFPSCharacterBase* Player;
+	class AController* PlayerController;
+		//game mode 
+	UPROPERTY()
+		class AFPSGameModeBase* GameMode;
+
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Character State")
 		float Health;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character State")
@@ -32,23 +38,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character State")
 		float ArmorAbsorption = 0.5;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Character State")
-		TArray<int32>Ammo;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character State")
 		class USoundBase* HitSound;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 		USoundBase* PainSound;
 
-
-	//game mode 
-	UPROPERTY()
-		class AFPSGameModeBase* GameMode;
-
 	bool bIsDead = Health > 0.f ? false : true;
 
+	virtual void BeginPlay() override;
 public:
+	FReceivedDamageDeleGate ReceivedDamage;
+
 	//Health
 	void AddHealth(float Amount) { SetHealth(Health + Amount); }
 	void RemoveHealth(float Amount) { SetHealth(Health - Amount); }
@@ -62,25 +63,13 @@ public:
 	float ArmorAbsorbDamage(float& Damage);
 	float GetArmor() { return Armor; }
 
-	//Ammo
-	void AddAmmo(EAmmoType AmmoType, int32 Amount) { SetAmmo(AmmoType, GetAmmo(AmmoType) + Amount); }
-	void ConsumeAmmo(EAmmoType AmmoType, int32 Amount) { SetAmmo(AmmoType, GetAmmo(AmmoType) - Amount); }
-
-	int32 GetAmmo(EAmmoType AmmoType) { return Ammo[ENUM_TO_INT32(AmmoType)]; }
-	void SetAmmo(EAmmoType AmmoType, int32 Amount) { Ammo[ENUM_TO_INT32(AmmoType)] = FMath::Max(0, Amount); }
-
 	//Damage
-	
 	void ApplyDamage(float Damage,class AFPSCharacterBase* DamageCauser);
 
 	AFPSGameModeBase* GetGameMode() { return GameMode; }
 	void SetGameMode(class AFPSGameModeBase* NewGameMode){GameMode = NewGameMode;}
+	void SetCompInfo(class AFPSCharacterBase* NewPlayer);
 
 	FORCEINLINE float GetHealthPercent() const { return Health / 100.f; }
-	FORCEINLINE float GetArmorPercent() const { return Armor / 100.f; }
-
-	FReceivedDamageDeleGate ReceivedDamage;
-
-	UFUNCTION()
-		virtual void UpdateState(float HealthPercenet, float ArmorPercent);
+	FORCEINLINE float GetArmorPercent() const { return Armor / 100.f; } 
 };

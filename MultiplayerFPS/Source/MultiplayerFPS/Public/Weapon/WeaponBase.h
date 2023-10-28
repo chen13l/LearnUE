@@ -62,6 +62,8 @@ protected:
 
 	UPROPERTY()
 		class APlayerFPSCharacter* Character;
+	UPROPERTY()
+		class UWeaponComponent* WeaponComp;
 
 	FTimerHandle FireTimer;
 	bool bWantsFire;
@@ -82,6 +84,7 @@ protected:
 	UFUNCTION(NetMulticast, Unreliable)
 		void SpawnAmmo();
 public:
+	EWeaponType GetWeaponType() const { return WeaponType; }
 
 	EAmmoType GetAmmoType() const { return AmmoType; }
 

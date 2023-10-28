@@ -4,6 +4,8 @@
 #include "Weapon/WeaponBase.h"
 #include "Character/Player/PlayerFPSCharacter.h"
 #include "Character/Player/FPSPlayerController.h"
+#include "Character/CharacterComponent/HealthComponent.h"
+#include "Character/CharacterComponent/WeaponComponent.h"
 #include "Projectile/Ammo.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -30,6 +32,10 @@ void AWeaponBase::SetOwner(AActor* NewOwner)
 	Super::SetOwner(NewOwner);
 
 	Character = Cast<APlayerFPSCharacter>(NewOwner);
+	if (Character != nullptr)
+	{
+		WeaponComp = Character->GetWeaponComp();
+	}
 }
 
 void AWeaponBase::StartFire()
@@ -41,7 +47,7 @@ void AWeaponBase::StartFire()
 	}
 
 	//if there is no ammo, play the no ammo sound on the owning clent 
-	if (Character->GetWeaponAmmo(AmmoType) == 0) {
+	if (WeaponComp->GetAmmo(AmmoType) == 0) {
 		if (NoAmmoSound) {
 			Character->ClientPlaySound(NoAmmoSound);
 		}
@@ -55,14 +61,14 @@ void AWeaponBase::StartFire()
 	}
 
 	//consume the ammo
-	Character->GetHealthComp()->ConsumeAmmo(AmmoType, 1);
+	Character->GetWeaponComp()->ConsumeAmmo(AmmoType, 1);
 
 	//fire the hitscan using the camera location and direction
 	const FVector FireLocation = Character->GetFollowCamera();
 	const FVector FireDirection = Character->GetCameraDirection();
 
 	FireHitScan(FireLocation, FireDirection);
-	
+
 	SpawnAmmo();
 
 	//schedule the FireTimer depending on the value of the FireMode
@@ -93,9 +99,9 @@ void AWeaponBase::FireHitScan(FVector FireLocation, FVector FireDirection)
 
 	if (HitCharacter) {
 		AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(HitCharacter->GetController());
+		UHealthComponent* HealthComp = HitCharacter->GetHealthComp();
 		if (PlayerController != nullptr) {
-			PlayerController->UpdateHealthPercent(HitCharacter->GetHealthComp()->GetHealthPercent());
-			PlayerController->UpdateArmorPercent(HitCharacter->GetHealthComp()->GetArmorPercent());
+			PlayerController->UpdateStatePercent(HealthComp->GetHealthPercent(), HealthComp->GetArmorPercent());
 		}
 	}
 }
@@ -128,8 +134,10 @@ void AWeaponBase::SpawnAmmo_Implementation() {
 	AFPSCharacterBase* WeaponOwner = Cast<AFPSCharacterBase>(GetOwner());
 	//spawn ammo
 	float SpawnDistance = 20.f;
+
 	const FVector SpawnLocation = AmmoFrom->GetComponentLocation() + (FireDirection * SpawnDistance);
 	FTransform SpawnTransform(AmmoFrom->GetComponentRotation(), SpawnLocation);
+
 	AAmmo* Projectile = GetWorld()->SpawnActorDeferred<AAmmo>(AmmoClass, SpawnTransform);
 	Projectile->SetAmmoOwner(WeaponOwner);
 	Projectile->GetAmmoMovementComponent()->InitialSpeed = 9999.9f;

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Character/FPSCharacterBase.h"
-#include "Character/CharacterComponent/StateInterface.h"
 #include "Character/CharacterComponent/HealthComponent.h"
 #include "Camera/CameraComponent.h"
 #include "InputActionValue.h"
@@ -19,6 +18,9 @@ class MULTIPLAYERFPS_API APlayerFPSCharacter : public AFPSCharacterBase
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Player Comp")
+		class ULookAtComponent* ViewComp;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
 		class UInputAction* IA_Move;
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
@@ -40,7 +42,8 @@ protected:
 		class UInputAction* IA_PreviousWeapon;
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
 		class UInputAction* IA_Scoreboard;
-
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
+		class UInputAction* IA_Pick;
 	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "PlayerInput")
 		class UInputMappingContext* IMC_PlayerInput;
 
@@ -63,8 +66,10 @@ protected:
 	void OnPressedPreviousWeapon();
 	void OnPressedNextWeapon();
 
-	void OnPressedScoreboard();
+	void OnPressedPick();
 
+	void OnPressedScoreboard();
+	
 public:
 	APlayerFPSCharacter();
 

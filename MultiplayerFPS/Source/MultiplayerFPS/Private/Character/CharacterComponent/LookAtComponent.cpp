@@ -2,8 +2,11 @@
 
 
 #include "Character/CharacterComponent/LookAtComponent.h"
-#include "FunctionLib\WeaponBlueprintFunctionLibrary.h"
+#include "Character/Player/PlayerFPSCharacter.h"
+#include "Pickups/PickupBase.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
 
 // Sets default values for this component's properties
 ULookAtComponent::ULookAtComponent()
@@ -12,50 +15,32 @@ ULookAtComponent::ULookAtComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
-
-
-// Called when the game starts
-void ULookAtComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-
-}
-
 
 // Called every frame
 void ULookAtComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
-	bCanSeeTarget = LookAt();
-}
+	APlayerFPSCharacter* PlayerCharacter = Cast<APlayerFPSCharacter>(GetOwner());
+	const FVector Start = PlayerCharacter->GetFollowCamera();
+	const FVector ViewDirection = PlayerCharacter->GetCameraDirection();
+	const FVector End = Start + ViewDirection * PickupArm;
 
-bool ULookAtComponent::LookAt()
-{
-	if (TargetActor == nullptr) { return false; }
-	
-	TArray<const AActor*>IgnoreActors = { GetOwner(),TargetActor };
-	if (UWeaponBlueprintFunctionLibrary::CanSeeActor(GetWorld(),
-		GetComponentLocation(),
-		TargetActor,
-		IgnoreActors)) {
-		
-		FVector Start = GetComponentLocation();
-		FVector End = TargetActor->GetActorLocation();
+	FHitResult Hit(ForceInit);
+	FCollisionQueryParams TraceParams("Pick Trace", false, PlayerCharacter);
+	GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
 
-		//Caculate the necessary rotation for the actor to face target
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(Start, End);
-
-		//set rotation for owner
-		GetOwner()->SetActorRotation(LookAtRotation);
-
-		return true;
+	APickupBase* HitPickup = Cast<APickupBase>(Hit.GetActor());
+	if (HitPickup != nullptr) {
+		TargetPickup = HitPickup;
+		const FString Values = FString::Printf(TEXT("%s"), *TargetPickup->GetPickupName());
+		DrawDebugString(GetWorld(), TargetPickup->GetActorLocation(), Values, nullptr, FColor::Red, 0.f, true);
+	}
+	else
+	{
+		TargetPickup = nullptr;
 	}
 
-	return false;
 }
+

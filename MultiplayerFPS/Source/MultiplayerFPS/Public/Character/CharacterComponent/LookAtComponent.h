@@ -7,28 +7,25 @@
 #include "LookAtComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MULTIPLAYERFPS_API ULookAtComponent : public USceneComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	ULookAtComponent();
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
 
-	virtual bool LookAt();
+	float PickupArm = 100.f;
+	class APickupBase* TargetPickup;
 
-	bool bCanSeeTarget = false;
-	AActor* TargetActor;
-
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	FORCEINLINE void SetTarget(AActor* NewTargetActor) { TargetActor = NewTargetActor; }
-	FORCEINLINE bool CanSeeTarget() { return bCanSeeTarget; }
+	UFUNCTION(BlueprintCallable)
+		class APickupBase* GetTarget(){return TargetPickup;}
+
 };
