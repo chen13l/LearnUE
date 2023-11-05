@@ -9,9 +9,12 @@
 
 void AFPSPlayerController::UpdateStatePercent(float HealthPercent, float ArmorPercent)
 {
-	if (HUDWidget) {
-		HUDWidget->UpdateHealthPercent(HealthPercent);
-		HUDWidget->UpdateArmorPercent(ArmorPercent);
+	if (IsLocalController()) {
+
+		if (HUDWidget) {
+			HUDWidget->UpdateHealthPercent(HealthPercent);
+			HUDWidget->UpdateArmorPercent(ArmorPercent);
+		}
 	}
 }
 
@@ -20,7 +23,6 @@ void AFPSPlayerController::OnPossess(APawn* PossessedPawn)
 	Super::OnPossess(PossessedPawn);
 
 	AFPSCharacterBase* CharacterBase = Cast<AFPSCharacterBase>(PossessedPawn);
-	CharacterBase->GetHealthComp()->ReceivedDamage.AddDynamic(this,&AFPSPlayerController::UpdateStatePercent);
 }
 
 void AFPSPlayerController::BeginPlay()
@@ -29,24 +31,26 @@ void AFPSPlayerController::BeginPlay()
 	if (IsLocalPlayerController()) {
 		if (BP_HUDWidget) {
 			HUDWidget = CreateWidget<UHUDWidget>(this, BP_HUDWidget);
-			HUDWidget->UpdateArmorPercent(1.0f);
-			HUDWidget->UpdateHealthPercent(1.0f);
-			HUDWidget->AddToViewport(1);
-		}
-	}
-
-	if (IsLocalController()) {
-		if (PlayerMenuClass) {
-			PlayerMenu = CreateWidget<UPlayerMenu>(this, PlayerMenuClass);
-			PlayerMenu->AddToViewport(0);
+			HUDWidget->AddToViewport(0);
 		}
 	}
 }
 
 void AFPSPlayerController::ToggleScoreboard(){
-	if (PlayerMenu != nullptr) {
-		PlayerMenu->ToggleScoreboard();
+
+	if (IsLocalController()) {
+		if (PlayerMenuClass) {
+			PlayerMenu = CreateWidget<UPlayerMenu>(this, PlayerMenuClass);
+			PlayerMenu->ToggleScoreboard();
+			PlayerMenu->AddToViewport(0);
+		}
 	}
+}
+
+void AFPSPlayerController::ShowdownScoreboard()
+{
+	PlayerMenu->RemoveFromParent();
+	PlayerMenu->Destruct();
 }
 
 void AFPSPlayerController::ClientNotifyKill_Implementation(const FString& Name) {

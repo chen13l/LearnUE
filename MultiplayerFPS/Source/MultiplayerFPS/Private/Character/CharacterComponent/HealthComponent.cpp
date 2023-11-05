@@ -3,6 +3,8 @@
 
 #include "Character/CharacterComponent/HealthComponent.h"
 #include "Character/FPSCharacterBase.h"
+#include "Character/Player/FPSPlayerController.h"
+#include "Character/Player/PlayerFPSCharacter.h"
 #include "Weapon/WeaponBase.h" 
 #include "Game/FPSGameModeBase.h"
 #include "Net/UnrealNetwork.h"
@@ -54,8 +56,11 @@ void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser
 	else {
 		RemoveHealth(Damage);
 	}
-
-	ReceivedDamage.Broadcast(GetHealthPercent(), GetArmorPercent());
+	APlayerFPSCharacter* PlayerChar = Cast<APlayerFPSCharacter>(GetOwner());
+	AFPSPlayerController* PlayerControll = Cast<AFPSPlayerController>(PlayerChar->GetController());
+	if (PlayerControll != nullptr) {
+		PlayerControll->UpdateStatePercent(GetHealthPercent(), GetArmorPercent());
+	}
 
 	//play the hit sound on the owning client of the damage causer
 	if (HitSound != nullptr && DamageCauser != nullptr) {
@@ -69,10 +74,10 @@ void UHealthComponent::ApplyDamage(float Damage, AFPSCharacterBase* DamageCauser
 	if (GetHealth() <= 0.0f) {
 		if (GameMode != nullptr && DamageCauser != nullptr)
 		{
-			GameMode->OnKill(DamageCauser->GetController(), PlayerController);
+			UE_LOG(LogTemp, Error, TEXT("Killed"));
+			GameMode->OnKill(DamageCauser->GetController(), PlayerControll);
 		}
 	}
-
 }
 
 void UHealthComponent::SetCompInfo(AFPSCharacterBase* NewPlayer)

@@ -50,9 +50,9 @@ public:
 	int32 WeaponIndex = INDEX_NONE;
 	void EquipWeapon(EWeaponType WeaponType, bool  bPlaySound = true);
 	void CycleWeapons(int32 Direction);
-		AWeaponBase* GetEquipingWeapon()const { return Weapon; }
-		UFUNCTION(BlueprintCallable)
-		bool HasWeapon()const {return Weapon!=nullptr; }
+	AWeaponBase* GetEquipingWeapon()const { return Weapon; }
+	UFUNCTION(BlueprintCallable)
+		bool HasWeapon()const { return Weapon != nullptr; }
 
 	//Ammo
 	UFUNCTION(BlueprintCallable)

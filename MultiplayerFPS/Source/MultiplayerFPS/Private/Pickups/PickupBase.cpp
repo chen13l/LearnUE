@@ -16,6 +16,7 @@ APickupBase::APickupBase()
 
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetCollisionProfileName("OverlapAll");
+	Mesh->SetCollisionObjectType(ECC_Visibility);
 	RootComponent = Mesh;
 
 	RotatingMovement = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("Rotating Movement"));

@@ -9,7 +9,6 @@
 #include "MultiplayerFPS/MultiplayerFPS.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FReceivedDamageDeleGate, float, HealthPercent, float, ArmorPercent);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MULTIPLAYERFPS_API UHealthComponent : public UActorComponent
@@ -48,7 +47,6 @@ protected:
 
 	virtual void BeginPlay() override;
 public:
-	FReceivedDamageDeleGate ReceivedDamage;
 
 	//Health
 	void AddHealth(float Amount) { SetHealth(Health + Amount); }

@@ -37,6 +37,7 @@ public:
 	virtual void OnPossess(APawn* PossessedPawn) override;
 
 	void ToggleScoreboard();
+	void ShowdownScoreboard();
 
 	UFUNCTION(Client, Reliable)
 		void ClientNotifyKill(const FString& Name);

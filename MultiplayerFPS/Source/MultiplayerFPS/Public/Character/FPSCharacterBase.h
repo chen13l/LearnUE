@@ -28,10 +28,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 		USoundBase* LandSound;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FPS Character")
+	UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "FPS Character")
 		UHealthComponent* StateComp;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FPS Character")
+	UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadOnly, Category = "FPS Character")
 		UWeaponComponent* WeaponComp;
 
 	// Called when the game starts or when spawned
@@ -65,4 +65,12 @@ public:
 		void ClientPlaySound(USoundBase* Sound);
 	UFUNCTION(NetMulticast, Unreliable)
 		void MulticastPlayFireSound(USoundBase* FireSound, USoundAttenuation* FireSoundeAttenuation);
+
+	UFUNCTION(Server,Reliable)
+		void ServerOnFire();
+	UFUNCTION(Server,Reliable)
+		void ServerAddWeapon(class APickupBase* PickTarget);
+	UFUNCTION(server,Reliable)
+		void ServerStopFire();
+
 };

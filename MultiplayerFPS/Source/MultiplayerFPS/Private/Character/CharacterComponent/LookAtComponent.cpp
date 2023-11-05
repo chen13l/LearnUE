@@ -7,6 +7,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
+#include "Engine/Engine.h"
 
 // Sets default values for this component's properties
 ULookAtComponent::ULookAtComponent()
@@ -36,6 +37,7 @@ void ULookAtComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 		TargetPickup = HitPickup;
 		const FString Values = FString::Printf(TEXT("%s"), *TargetPickup->GetPickupName());
 		DrawDebugString(GetWorld(), TargetPickup->GetActorLocation(), Values, nullptr, FColor::Red, 0.f, true);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, Values);
 	}
 	else
 	{

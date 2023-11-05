@@ -64,6 +64,7 @@ void APlayerFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 			//other
 			EnhancedPlayerInput->BindAction(IA_Scoreboard, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedScoreboard);
 			EnhancedPlayerInput->BindAction(IA_Pick, ETriggerEvent::Triggered, this, &APlayerFPSCharacter::OnPressedPick);
+			EnhancedPlayerInput->BindAction(IA_Scoreboard, ETriggerEvent::Completed, this, &APlayerFPSCharacter::OnPressedShotdownScoreboard);
 		}
 	}
 }
@@ -97,16 +98,12 @@ void APlayerFPSCharacter::Look(const FInputActionValue& Value)
 
 void APlayerFPSCharacter::OnPressedFire()
 {
-	if (WeaponComp->GetEquipingWeapon() != nullptr) {
-		WeaponComp->GetEquipingWeapon()->OnPressedFire();
-	}
+	ServerOnFire();
 }
 
 void APlayerFPSCharacter::OnReleaseFire()
 {
-	if (WeaponComp->GetEquipingWeapon() != nullptr) {
-		WeaponComp->GetEquipingWeapon()->OnReleasedFire();
-	}
+	ServerStopFire();
 }
 
 void APlayerFPSCharacter::OnPressedPistol()
@@ -137,16 +134,25 @@ void APlayerFPSCharacter::OnPressedNextWeapon()
 void APlayerFPSCharacter::OnPressedPick()
 {
 	APickupBase* PickTarget = ViewComp->GetTarget();
-	if (PickTarget != nullptr) {
-		PickTarget->OnPickedUp(this);
-	}
+	ServerAddWeapon(PickTarget);
 }
 
 void APlayerFPSCharacter::OnPressedScoreboard()
 {
 	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(GetController());
 
-	if (PlayerController != nullptr) {
+	if (PlayerController != nullptr && !bHasOpenedScoreboard) {
 		PlayerController->ToggleScoreboard();
+		bHasOpenedScoreboard = !bHasOpenedScoreboard;
+	}
+}
+
+void APlayerFPSCharacter::OnPressedShotdownScoreboard()
+{
+	AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(GetController());
+
+	if (PlayerController != nullptr && bHasOpenedScoreboard) {
+		PlayerController->ShowdownScoreboard();
+		bHasOpenedScoreboard = !bHasOpenedScoreboard;
 	}
 }

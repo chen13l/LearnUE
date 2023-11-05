@@ -4,6 +4,7 @@
 #include "Character/FPSCharacterBase.h"
 #include "Weapon/WeaponBase.h" 
 #include "Game/FPSGameModeBase.h"
+#include "Pickups\WeaponPickup.h"
 #include "MultiplayerFPS\MultiplayerFPS.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -100,3 +101,30 @@ void AFPSCharacterBase::MulticastPlayFireSound_Implementation(USoundBase* FireSo
 	);
 }
 
+void AFPSCharacterBase::ServerAddWeapon_Implementation(APickupBase* PickTarget) {
+	if (PickTarget != nullptr) {
+		PickTarget->OnPickedUp(this);
+	}
+}
+
+void AFPSCharacterBase::ServerOnFire_Implementation() {
+	if (WeaponComp->GetEquipingWeapon() != nullptr) {
+		WeaponComp->GetEquipingWeapon()->OnPressedFire();
+		UE_LOG(LogTemp, Error, TEXT("fire"));
+	}
+}
+
+void AFPSCharacterBase::ServerStopFire_Implementation() {
+	if (WeaponComp->GetEquipingWeapon() != nullptr) {
+		WeaponComp->GetEquipingWeapon()->OnReleasedFire();
+		UE_LOG(LogTemp, Error, TEXT("stop fire"));
+
+	}
+}
+
+void AFPSCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(AFPSCharacterBase, StateComp, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AFPSCharacterBase, WeaponComp, COND_OwnerOnly);
+}

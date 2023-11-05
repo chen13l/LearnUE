@@ -19,7 +19,6 @@ UWeaponComponent::UWeaponComponent()
 	//initial the ammo array
 	constexpr int32 AmmoCount = ENUM_TO_INT32(EAmmoType::MAX);
 	Ammo.Init(0, AmmoCount);
-
 }
 
 
@@ -49,11 +48,11 @@ void UWeaponComponent::AddWeapon(EWeaponType WeaponType)
 	//validate the add
 	const int32 NewWeaponIndex = ENUM_TO_INT32(WeaponType);
 
-	
+
 	if (!WeaponClasses.IsValidIndex(NewWeaponIndex)) {
 		return;
 	}
-	
+
 	if (Weapons[NewWeaponIndex] != nullptr) {
 		AddAmmo((EAmmoType)NewWeaponIndex, 20);
 		return;

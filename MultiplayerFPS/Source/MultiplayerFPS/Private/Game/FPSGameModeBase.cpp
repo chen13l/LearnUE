@@ -86,11 +86,11 @@ bool AFPSGameModeBase::HasWinner() const
 
 void AFPSGameModeBase::OnKill(AController* KillerController, AController* VictimController)
 {
+	
 	if (!IsMatchInProgress())
 	{
 		return;
 	}
-
 	// Add kill to the killer
 
 	if (KillerController != nullptr && KillerController != VictimController)
@@ -133,10 +133,9 @@ void AFPSGameModeBase::OnKill(AController* KillerController, AController* Victim
 		if (!HasWinner())
 		{
 			RestartPlayer(VictimController);
-			AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(VictimController);
-			if (PlayerController) {
-				PlayerController->UpdateStatePercent(1.0f, 1.0f);
-				UE_LOG(LogTemp, Error, TEXT("Has ReSpawned"));
+			AFPSPlayerController* PlayerControll = Cast<AFPSPlayerController>(VictimController);
+			if (PlayerControll) {
+				PlayerControll->UpdateStatePercent(1.0f, 1.0f);
 			}
 		}
 	}

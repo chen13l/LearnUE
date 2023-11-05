@@ -68,7 +68,9 @@ protected:
 
 	void OnPressedPick();
 
+	bool bHasOpenedScoreboard = false;
 	void OnPressedScoreboard();
+	void OnPressedShotdownScoreboard();
 	
 public:
 	APlayerFPSCharacter();
